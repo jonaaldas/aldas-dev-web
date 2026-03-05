@@ -127,7 +127,7 @@ const { data: posts } = await useAsyncData('posts', () =>
 )
 
 // Fetch tweets
-const { data: tweetsData, pending: tweetsPending, error: tweetsError } = useFetch('/api/tweets')
+const { data: tweetsData, pending: tweetsPending, error: tweetsError } = await useFetch('/api/tweets')
 
 const fallbackTweets = [
   { id: '1', text: 'Shipped a new feature today. Feels good.', created_at: '2026-03-04T14:32:00.000Z', url: '#' },
