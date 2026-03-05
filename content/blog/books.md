@@ -1,6 +1,7 @@
 ---
 title: Sci-Fi Novels
 description: Asimov, Herbert, Lem
+date: '2025-11'
 icon: '< >'
 ---
 

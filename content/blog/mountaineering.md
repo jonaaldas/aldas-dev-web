@@ -1,6 +1,7 @@
 ---
 title: Mountaineering
 description: Summits and long trails
+date: '2026-02'
 icon: '///'
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: Specialty Coffee
 description: Pour-overs and single origins
+date: '2026-01'
 icon: '{ }'
 ---
 

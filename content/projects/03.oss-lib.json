@@ -1,0 +1,15 @@
+{
+  "title": "Open Source Library",
+  "description": "Developer utility library",
+  "paragraphs": [
+    "A collection of developer utilities that I kept rewriting across projects. Finally packaged them into a proper library.",
+    "Includes a fast HTTP client wrapper with retries, structured logging helpers, config file parser, and CLI argument parser."
+  ],
+  "tech": ["Go", "Rust"],
+  "status": "Beta",
+  "links": {
+    "github": "https://github.com/aldas/oss-lib"
+  },
+  "date": "2025-11",
+  "order": 3
+}

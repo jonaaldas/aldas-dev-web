@@ -3,17 +3,18 @@
     <nav>
       <span class="logo">~/aldas</span>
       <div class="links">
-        <a href="https://x.com" target="_blank">x.com</a>
-        <a href="https://github.com" target="_blank">github</a>
+        <template v-if="about">
+          <a v-for="link in about.links" :key="link.url" :href="link.url" target="_blank">{{ link.label }}</a>
+        </template>
         <NuxtLink to="/cli" class="cli-link">> cli</NuxtLink>
       </div>
     </nav>
 
     <main>
-      <section class="hero">
+      <section class="hero" v-if="about">
         <p class="label">Hello, I'm</p>
-        <h1>Aldas</h1>
-        <p class="bio">Developer. Builder. I write code, ship products, and <br/>sometimes talk about it on the internet.</p>
+        <h1>{{ about.name }}</h1>
+        <p class="bio">{{ about.summary }}</p>
       </section>
 
       <section>
@@ -22,21 +23,28 @@
           <h2>Projects</h2>
         </div>
         <div class="project-list">
-          <NuxtLink
+          <div
             v-for="project in projects"
-            :key="project.path"
-            :to="project.path"
-            class="project-row"
+            :key="project.id"
+            class="project-card"
           >
-            <div class="project-name">
-              <span class="bullet"></span>
-              {{ project.title }}
+            <div class="project-top">
+              <div class="project-name">
+                <span class="bullet"></span>
+                {{ project.title }}
+              </div>
+              <span class="project-status">{{ project.status }}</span>
             </div>
-            <div class="project-desc">{{ project.description }}</div>
-            <div class="project-stack">
-              <code v-for="t in project.stack" :key="t">{{ t }}</code>
+            <p class="project-desc">{{ project.description }}</p>
+            <div class="project-tech">
+              <code v-for="t in project.tech" :key="t">{{ t }}</code>
             </div>
-          </NuxtLink>
+            <div class="project-links" v-if="project.links">
+              <a v-if="project.links.website" :href="project.links.website" target="_blank">-> visit</a>
+              <a v-if="project.links.github" :href="project.links.github" target="_blank">-> github</a>
+              <a v-if="project.links.video" :href="project.links.video" target="_blank">-> video</a>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -76,17 +84,17 @@
           <span class="icon">[*]</span>
           <h2>When I'm not coding</h2>
         </div>
-        <div class="interest-grid">
+        <div class="blog-grid">
           <NuxtLink
-            v-for="interest in interests"
-            :key="interest.path"
-            :to="interest.path"
-            class="interest-card"
+            v-for="post in posts"
+            :key="post.path"
+            :to="post.path"
+            class="blog-card"
           >
-            <span class="interest-icon">{{ interest.icon }}</span>
+            <span class="blog-icon">{{ post.icon || '>' }}</span>
             <div>
-              <h3>{{ interest.title }}</h3>
-              <p>{{ interest.description }}</p>
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.description }}</p>
             </div>
           </NuxtLink>
         </div>
@@ -103,14 +111,19 @@
 const config = useRuntimeConfig()
 const xUsername = config.public.xUsername
 
-// Fetch projects from content
-const { data: projects } = await useAsyncData('projects', () =>
-  queryCollection('projects').order('date', 'DESC').all()
+// Fetch about info
+const { data: about } = await useAsyncData('about', () =>
+  queryCollection('about').first()
 )
 
-// Fetch interests from content
-const { data: interests } = await useAsyncData('interests', () =>
-  queryCollection('interests').all()
+// Fetch projects (data collection, no .path)
+const { data: projects } = await useAsyncData('projects', () =>
+  queryCollection('projects').order('order', 'ASC').all()
+)
+
+// Fetch blog posts
+const { data: posts } = await useAsyncData('posts', () =>
+  queryCollection('blog').order('date', 'DESC').all()
 )
 
 // Fetch tweets
@@ -226,25 +239,31 @@ h2 {
   font-weight: 400;
 }
 
+/* Projects */
 .project-list {
   display: flex;
   flex-direction: column;
-}
-
-.project-row {
-  display: grid;
-  grid-template-columns: 180px 1fr auto;
   gap: 1rem;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid #00ff4110;
-  transition: background 0.2s;
-  text-decoration: none;
-  color: inherit;
 }
 
-.project-row:hover {
-  background: #00ff4108;
+.project-card {
+  border: 1px solid #00ff4118;
+  border-radius: 6px;
+  padding: 1.25rem;
+  transition: all 0.2s;
+  background: rgba(0, 255, 65, 0.02);
+}
+
+.project-card:hover {
+  border-color: #00ff4140;
+  background: rgba(0, 255, 65, 0.05);
+}
+
+.project-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 .project-name {
@@ -262,17 +281,25 @@ h2 {
   flex-shrink: 0;
 }
 
+.project-status {
+  font-size: 0.75rem;
+  color: #00ff4150;
+}
+
 .project-desc {
   color: #00ff4170;
   font-size: 0.85rem;
+  margin-bottom: 0.75rem;
 }
 
-.project-stack {
+.project-tech {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
 }
 
-.project-stack code {
+.project-tech code {
   font-size: 0.75rem;
   color: #00ff4150;
   border: 1px solid #00ff4120;
@@ -280,27 +307,28 @@ h2 {
   border-radius: 3px;
 }
 
-.loading {
-  padding: 1rem 0;
+.project-links {
+  display: flex;
+  gap: 1rem;
 }
 
-.loading-text {
-  color: #00ff4160;
-  font-size: 0.85rem;
+.project-links a {
+  font-size: 0.8rem;
+  color: #00ff4150;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.blink {
-  animation: blink 1s step-end infinite;
+.project-links a:hover {
+  color: #00ff41;
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
-.tweet-error {
-  margin-bottom: 1rem;
-}
-
+/* Tweets */
+.loading { padding: 1rem 0; }
+.loading-text { color: #00ff4160; font-size: 0.85rem; }
+.blink { animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.tweet-error { margin-bottom: 1rem; }
 .dim { color: #00ff4140; font-size: 0.8rem; }
 
 .tweet-list {
@@ -329,16 +357,8 @@ h2 {
   margin-bottom: 0.75rem;
 }
 
-.tweet-handle {
-  font-size: 0.8rem;
-  color: #00ff4180;
-  font-weight: 500;
-}
-
-.tweet-date {
-  font-size: 0.75rem;
-  color: #00ff4140;
-}
+.tweet-handle { font-size: 0.8rem; color: #00ff4180; font-weight: 500; }
+.tweet-date { font-size: 0.75rem; color: #00ff4140; }
 
 .tweet-text {
   font-size: 0.9rem;
@@ -353,23 +373,17 @@ h2 {
   text-decoration: none;
   transition: color 0.2s;
 }
+.tweet-link:hover { color: #00ff41; }
+.tweet-link.disabled { pointer-events: none; color: #00ff4125; }
 
-.tweet-link:hover {
-  color: #00ff41;
-}
-
-.tweet-link.disabled {
-  pointer-events: none;
-  color: #00ff4125;
-}
-
-.interest-grid {
+/* Blog / Interests */
+.blog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
 }
 
-.interest-card {
+.blog-card {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
@@ -381,12 +395,12 @@ h2 {
   color: inherit;
 }
 
-.interest-card:hover {
+.blog-card:hover {
   border-color: #00ff4140;
   background: #00ff4108;
 }
 
-.interest-icon {
+.blog-icon {
   font-size: 0.85rem;
   color: #00ff4150;
   flex-shrink: 0;
@@ -394,13 +408,13 @@ h2 {
   text-align: center;
 }
 
-.interest-card h3 {
+.blog-card h3 {
   font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 0.25rem;
 }
 
-.interest-card p {
+.blog-card p {
   font-size: 0.8rem;
   color: #00ff4160;
 }
@@ -413,10 +427,6 @@ footer {
 }
 
 @media (max-width: 640px) {
-  .project-row {
-    grid-template-columns: 1fr;
-    gap: 0.25rem;
-  }
   .hero h1 { font-size: 2rem; }
 }
 </style>

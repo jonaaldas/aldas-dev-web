@@ -1,6 +1,7 @@
 ---
 title: Open Source
 description: Contributing and learning
+date: '2025-09'
 icon: '| |'
 ---
 

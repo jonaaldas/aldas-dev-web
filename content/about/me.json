@@ -1,0 +1,11 @@
+{
+  "name": "Aldas",
+  "role": "Developer & Builder",
+  "summary": "I build things on the internet. I write code, ship products, and sometimes talk about it online. I like clean code, fast tools, and simple solutions to hard problems.",
+  "location": "The Internet",
+  "links": [
+    { "label": "x.com", "url": "https://x.com/aldas" },
+    { "label": "github", "url": "https://github.com/aldas" },
+    { "label": "email", "url": "mailto:hello@aldas.dev" }
+  ]
+}

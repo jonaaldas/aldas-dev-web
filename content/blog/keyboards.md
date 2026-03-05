@@ -1,6 +1,7 @@
 ---
 title: Mechanical Keyboards
 description: Building and collecting
+date: '2025-12'
 icon: '[ ]'
 ---
 

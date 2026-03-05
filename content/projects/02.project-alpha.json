@@ -1,0 +1,13 @@
+{
+  "title": "Project Alpha",
+  "description": "SaaS tool for distributed teams",
+  "paragraphs": [
+    "A real-time collaboration platform designed for distributed teams. API-first architecture with a focus on speed and simplicity.",
+    "Features include real-time document collaboration, role-based access control, and a full webhook & integrations system."
+  ],
+  "tech": ["TypeScript", "Node", "Postgres", "Redis"],
+  "status": "In Development",
+  "links": {},
+  "date": "2026-01",
+  "order": 2
+}

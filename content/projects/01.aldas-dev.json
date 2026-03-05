@@ -1,0 +1,17 @@
+{
+  "title": "aldas.dev",
+  "description": "Personal website & digital garden",
+  "paragraphs": [
+    "My personal corner of the internet. Built with Nuxt 4, terminal aesthetics, and a sprinkle of personality.",
+    "Features an interactive CLI mode where you can navigate the site using actual terminal commands like ls, cat, and cd.",
+    "The site pulls in my latest tweets from the X API and displays projects and interests from markdown files using Nuxt Content."
+  ],
+  "tech": ["Nuxt", "Vue", "TypeScript", "Nuxt Content"],
+  "status": "LIVE",
+  "links": {
+    "website": "https://aldas.dev",
+    "github": "https://github.com/jonaaldas/aldas-dev-web"
+  },
+  "date": "2026-03",
+  "order": 1
+}

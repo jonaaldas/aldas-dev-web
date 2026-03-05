@@ -3,26 +3,46 @@ import { z } from 'zod'
 
 export default defineContentConfig({
   collections: {
-    projects: defineCollection({
-      type: 'page',
-      source: 'projects/*.md',
+    about: defineCollection({
+      type: 'data',
+      source: 'about/*.json',
       schema: z.object({
-        title: z.string(),
-        description: z.string(),
-        stack: z.array(z.string()),
-        status: z.string(),
-        url: z.string().optional(),
-        repo: z.string().optional(),
-        date: z.string(),
+        name: z.string(),
+        role: z.string(),
+        summary: z.string(),
+        location: z.string(),
+        links: z.array(z.object({
+          label: z.string(),
+          url: z.string(),
+        })),
       }),
     }),
-    interests: defineCollection({
-      type: 'page',
-      source: 'interests/*.md',
+    projects: defineCollection({
+      type: 'data',
+      source: 'projects/*.json',
       schema: z.object({
         title: z.string(),
         description: z.string(),
-        icon: z.string(),
+        paragraphs: z.array(z.string()),
+        tech: z.array(z.string()),
+        status: z.string(),
+        links: z.object({
+          website: z.string().optional(),
+          github: z.string().optional(),
+          video: z.string().optional(),
+        }),
+        date: z.string(),
+        order: z.number().optional(),
+      }),
+    }),
+    blog: defineCollection({
+      type: 'page',
+      source: 'blog/*.md',
+      schema: z.object({
+        title: z.string(),
+        description: z.string(),
+        date: z.string(),
+        icon: z.string().optional(),
       }),
     }),
   },

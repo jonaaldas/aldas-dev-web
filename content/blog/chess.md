@@ -1,6 +1,7 @@
 ---
 title: Chess
 description: Middlegame enthusiast
+date: '2025-10'
 icon: '# #'
 ---
 
