@@ -1,4 +1,5 @@
 {
+  "title": "Open Source Library",
   "date": "2025-11",
   "description": "Developer utility library",
   "links": {
@@ -13,6 +14,5 @@
   "tech": [
     "Go",
     "Rust"
-  ],
-  "title": "Open Source Library"
+  ]
 }

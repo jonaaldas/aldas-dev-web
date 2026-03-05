@@ -1,4 +1,5 @@
 {
+  "title": "CLI Tool",
   "date": "2026-02",
   "description": "Productivity from the terminal",
   "links": {},
@@ -11,6 +12,5 @@
   "status": "WIP",
   "tech": [
     "Rust"
-  ],
-  "title": "CLI Tool"
+  ]
 }

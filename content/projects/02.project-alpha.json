@@ -1,4 +1,5 @@
 {
+  "title": "Project Alpha",
   "date": "2026-01",
   "description": "SaaS tool for distributed teams",
   "links": {},
@@ -13,6 +14,5 @@
     "Node",
     "Postgres",
     "Redis"
-  ],
-  "title": "Project Alpha"
+  ]
 }

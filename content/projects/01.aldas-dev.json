@@ -1,4 +1,5 @@
 {
+  "title": "aldas.dev",
   "date": "2026-03",
   "description": "Personal website & digital garden",
   "links": {
@@ -17,6 +18,5 @@
     "Vue",
     "TypeScript",
     "Nuxt Content"
-  ],
-  "title": "aldas.dev"
+  ]
 }
