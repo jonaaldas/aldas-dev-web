@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  ssr: false,
+  ssr: true,
   devtools: { enabled: true },
 
   runtimeConfig: {
@@ -27,5 +27,14 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxt/content'],
+  modules: ['@nuxt/content', 'nuxt-studio'],
+
+  studio: {
+    repository: {
+      provider: 'github',
+      owner: 'jonaaldas',
+      repo: 'aldas-dev-web',
+      branch: 'main',
+    },
+  },
 })
