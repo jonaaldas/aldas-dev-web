@@ -10,11 +10,11 @@ RUN bun install --frozen-lockfile
 COPY . .
 RUN bun run build
 
-# Production image — lightweight
-FROM oven/bun:1 AS production
+# Production image — same base so better-sqlite3 native binary is compatible
+FROM node:22-slim AS production
 WORKDIR /app
 
 COPY --from=build /app/.output /app
 
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "--bun", "run", "/app/server/index.mjs" ]
+CMD [ "node", "/app/server/index.mjs" ]
