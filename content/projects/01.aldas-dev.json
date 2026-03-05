@@ -12,6 +12,11 @@
     "The site pulls in my latest tweets from the X API and displays projects and interests from markdown files using Nuxt Content."
   ],
   "status": "LIVE",
-  "tech": ["Nuxt", "Vue", "TypeScript", "Nuxt Content"],
+  "tech": [
+    "Nuxt",
+    "Vue",
+    "TypeScript",
+    "Nuxt Content"
+  ],
   "title": "aldas.dev"
 }

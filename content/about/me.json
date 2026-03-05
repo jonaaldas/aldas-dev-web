@@ -1,8 +1,17 @@
 {
   "links": [
-    { "label": "x.com", "url": "https://x.com/aldas" },
-    { "label": "github", "url": "https://github.com/aldas" },
-    { "label": "email", "url": "mailto:hello@aldas.dev" }
+    {
+      "label": "x.com",
+      "url": "https://x.com/aldas"
+    },
+    {
+      "label": "github",
+      "url": "https://github.com/aldas"
+    },
+    {
+      "label": "email",
+      "url": "mailto:hello@aldas.dev"
+    }
   ],
   "location": "The Internet",
   "name": "Aldas",

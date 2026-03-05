@@ -9,6 +9,8 @@
     "I got tired of context-switching between apps for simple operations. This tool keeps me in the terminal and keeps me focused."
   ],
   "status": "WIP",
-  "tech": ["Rust"],
+  "tech": [
+    "Rust"
+  ],
   "title": "CLI Tool"
 }

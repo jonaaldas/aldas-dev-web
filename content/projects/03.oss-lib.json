@@ -10,6 +10,9 @@
     "Includes a fast HTTP client wrapper with retries, structured logging helpers, config file parser, and CLI argument parser."
   ],
   "status": "Beta",
-  "tech": ["Go", "Rust"],
+  "tech": [
+    "Go",
+    "Rust"
+  ],
   "title": "Open Source Library"
 }

@@ -8,6 +8,11 @@
     "Features include real-time document collaboration, role-based access control, and a full webhook & integrations system."
   ],
   "status": "In Development",
-  "tech": ["TypeScript", "Node", "Postgres", "Redis"],
+  "tech": [
+    "TypeScript",
+    "Node",
+    "Postgres",
+    "Redis"
+  ],
   "title": "Project Alpha"
 }
