@@ -1,14 +1,14 @@
 {
-  "title": "CLI Tool",
+  "date": "2026-02",
   "description": "Productivity from the terminal",
+  "links": {},
+  "order": 4,
   "paragraphs": [
     "The goal: replace 5 different tools with 1 fast, composable CLI.",
     "Handles task management, notes, bookmarks, and quick file search — all from the terminal where I already live.",
     "I got tired of context-switching between apps for simple operations. This tool keeps me in the terminal and keeps me focused."
   ],
-  "tech": ["Rust"],
   "status": "WIP",
-  "links": {},
-  "date": "2026-02",
-  "order": 4
+  "tech": ["Rust"],
+  "title": "CLI Tool"
 }
