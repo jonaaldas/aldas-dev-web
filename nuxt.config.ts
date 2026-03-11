@@ -1,4 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const env = process.env.NODE_ENV;
+const isProduction = env === 'production';
+const script = isProduction
+  ? [
+      {
+        defer: true,
+        src: isProduction ? 'https://track.aldas.dev/script.js' : '',
+        'data-website-id': 'db0fe301-1e73-4e0e-b227-aa45eda1e015',
+      },
+    ]
+  : [];
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   ssr: true,
@@ -22,8 +34,12 @@ export default defineNuxtConfig({
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap',
+        },
       ],
+      script,
     },
   },
 
@@ -37,4 +53,4 @@ export default defineNuxtConfig({
       branch: 'main',
     },
   },
-})
+});
