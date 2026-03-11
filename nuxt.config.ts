@@ -1,12 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
-const script = isProduction
+const umamiWebsiteId =
+  process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID || 'db0fe301-1e73-4e0e-b227-aa45eda1e015';
+const script = isProduction && umamiWebsiteId
   ? [
       {
         defer: true,
-        src: isProduction ? 'https://track.aldas.dev/script.js' : '',
-        'data-website-id': 'db0fe301-1e73-4e0e-b227-aa45eda1e015',
+        src: '/stats/script.js',
+        'data-host-url': '/stats',
+        'data-website-id': umamiWebsiteId,
       },
     ]
   : [];
@@ -18,8 +21,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     xBearerToken: '',
+    umamiProxyTarget: process.env.NUXT_UMAMI_PROXY_TARGET || 'https://track.aldas.dev',
     public: {
       xUsername: '',
+      umamiWebsiteId,
     },
   },
 
