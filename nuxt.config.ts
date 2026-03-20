@@ -48,7 +48,12 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxt/content', 'nuxt-studio'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/content', 'nuxt-studio', 'shadcn-nuxt'],
+
+  shadcn: {
+    prefix: '',
+    componentDir: '@/components/ui',
+  },
 
   studio: {
     repository: {

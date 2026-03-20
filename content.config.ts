@@ -35,6 +35,18 @@ export default defineContentConfig({
         order: z.number().optional(),
       }),
     }),
+    content: defineCollection({
+      type: 'data',
+      source: 'content/*.json',
+      schema: z.object({
+        title: z.string(),
+        url: z.string(),
+        source: z.enum(['YouTube', 'TikTok', 'Twitter', 'Instagram', 'LinkedIn', 'Twitch']),
+        thumbnail: z.string().optional(),
+        date: z.string(),
+        order: z.number().optional(),
+      }),
+    }),
     blog: defineCollection({
       type: 'page',
       source: 'blog/*.md',

@@ -1,432 +1,211 @@
 <template>
-  <div class="page">
-    <nav>
-      <span class="logo">~/aldas</span>
-      <div class="links">
-        <template v-if="about">
-          <a v-for="link in about.links" :key="link.url" :href="link.url" target="_blank">{{ link.label }}</a>
-        </template>
-        <NuxtLink to="/cli" class="cli-link">> cli</NuxtLink>
-      </div>
-    </nav>
-
-    <main>
-      <section class="hero" v-if="about">
-        <p class="label">Hello, I'm</p>
-        <h1>{{ about.name }}</h1>
-        <p class="bio">{{ about.summary }}</p>
-      </section>
-
-      <section>
-        <div class="section-header">
-          <span class="icon">[~]</span>
-          <h2>Projects</h2>
+  <div class="min-h-screen bg-background text-foreground">
+    <!-- Header -->
+    <header class="mx-auto max-w-3xl px-6 pt-16 pb-8">
+      <div class="flex items-start justify-between gap-6">
+        <div>
+          <h1 class="text-4xl font-bold tracking-tight">{{ about?.name || 'Jonathan' }}</h1>
+          <p class="mt-1 text-sm text-muted-foreground">{{ about?.role }}</p>
         </div>
-        <div class="project-list">
-          <div
-            v-for="project in projects"
-            :key="project.id"
-            class="project-card"
-          >
-            <div class="project-top">
-              <div class="project-name">
-                <span class="bullet"></span>
-                {{ project.title }}
-              </div>
-              <span class="project-status">{{ project.status }}</span>
-            </div>
-            <p class="project-desc">{{ project.description }}</p>
-            <div class="project-tech">
-              <code v-for="t in project.tech" :key="t">{{ t }}</code>
-            </div>
-            <div class="project-links" v-if="project.links">
-              <a v-if="project.links.website" :href="project.links.website" target="_blank">-> visit</a>
-              <a v-if="project.links.github" :href="project.links.github" target="_blank">-> github</a>
-              <a v-if="project.links.video" :href="project.links.video" target="_blank">-> video</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-header">
-          <span class="icon">[>]</span>
-          <h2>Recent Tweets</h2>
-        </div>
-        <div v-if="tweetsPending" class="loading">
-          <span class="loading-text">$ curl api.x.com/tweets <span class="blink">_</span></span>
-        </div>
-        <div v-else-if="tweetsError" class="tweet-error">
-          <span class="dim">connection refused -- showing cached tweets</span>
-        </div>
-        <div class="tweet-list">
-          <div class="tweet-card" v-for="tweet in displayTweets" :key="tweet.id">
-            <div class="tweet-top">
-              <span class="tweet-handle">@{{ xUsername || 'aldas' }}</span>
-              <span class="tweet-date">{{ formatDate(tweet.created_at) }}</span>
-            </div>
-            <p class="tweet-text">{{ tweet.text }}</p>
+        <div class="flex flex-wrap items-center gap-3 pt-2" v-if="about">
+          <nav class="flex flex-wrap gap-3">
             <a
-              :href="tweet.url"
+              v-for="link in allLinks"
+              :key="link.url"
+              :href="link.url"
               target="_blank"
-              rel="noopener"
-              class="tweet-link"
-              :class="{ disabled: tweet.url === '#' }"
-            >
-              -> view tweet
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="section-header">
-          <span class="icon">[*]</span>
-          <h2>When I'm not coding</h2>
-        </div>
-        <div class="blog-grid">
-          <NuxtLink
-            v-for="post in posts"
-            :key="post.path"
-            :to="post.path"
-            class="blog-card"
-          >
-            <span class="blog-icon">{{ post.icon || '>' }}</span>
-            <div>
-              <h3>{{ post.title }}</h3>
-              <p>{{ post.description }}</p>
-            </div>
+              class="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >{{ link.label }}</a>
+          </nav>
+          <NuxtLink to="/cli">
+            <Button variant="outline" size="sm" class="h-7 gap-1.5 rounded-full px-3 font-mono text-[11px]">
+              <span class="text-green-600">&gt;_</span> cli
+            </Button>
           </NuxtLink>
         </div>
-      </section>
-    </main>
+      </div>
+      <p class="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">{{ about?.summary }}</p>
+    </header>
 
-    <footer>
-      <span>&copy; {{ new Date().getFullYear() }} aldas.dev</span>
+    <Separator class="mx-auto max-w-3xl" />
+
+    <!-- Filters — only shown if there's data -->
+    <div v-if="tabs.length > 0" class="mx-auto flex max-w-3xl gap-2 px-6 py-4">
+      <Button
+        v-for="tab in tabs"
+        :key="tab.id"
+        variant="ghost"
+        size="sm"
+        class="h-7 rounded-full px-3 text-xs"
+        :class="activeTab === tab.id ? 'bg-primary/10 text-foreground font-semibold ring-1 ring-primary/20' : 'text-muted-foreground'"
+        @click="setTab(tab.id)"
+      >{{ tab.label }}</Button>
+    </div>
+
+    <!-- Grid -->
+    <div v-if="tabs.length > 0" class="mx-auto max-w-3xl columns-1 gap-3 px-6 pb-16 sm:columns-2 lg:columns-3">
+      <component
+        :is="item.href ? 'a' : item.to ? 'NuxtLink' : 'div'"
+        v-for="item in filteredItems"
+        :key="item.id"
+        :href="item.href"
+        :to="item.to"
+        :target="item.href ? '_blank' : undefined"
+        class="mb-3 block break-inside-avoid"
+      >
+        <!-- Content card (YouTube, TikTok, etc.) -->
+        <Card v-if="item.type === 'content'" class="group overflow-hidden transition-shadow hover:shadow-md">
+          <div v-if="item.thumbnail" class="relative aspect-video overflow-hidden bg-muted">
+            <img
+              :src="item.thumbnail"
+              :alt="item.title"
+              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            />
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-background shadow-lg">
+                <span class="text-sm text-foreground">&#9654;</span>
+              </div>
+            </div>
+          </div>
+          <CardContent class="flex items-start justify-between gap-2 p-3">
+            <p class="text-sm font-medium leading-snug">{{ item.title }}</p>
+            <Badge class="shrink-0 text-[10px] font-semibold" :class="item.badgeClass">{{ item.source }}</Badge>
+          </CardContent>
+        </Card>
+
+        <!-- Project -->
+        <Card v-else-if="item.type === 'project'" class="transition-shadow hover:shadow-md">
+          <CardHeader class="space-y-1.5 p-3 pb-0">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span
+                  class="h-2 w-2 rounded-full"
+                  :class="item.status === 'LIVE' ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]' : 'bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.4)]'"
+                />
+                <CardTitle class="text-sm">{{ item.title }}</CardTitle>
+              </div>
+              <Badge variant="secondary" class="text-[10px] font-medium text-indigo-600">Project</Badge>
+            </div>
+          </CardHeader>
+          <CardContent class="p-3 pt-1.5">
+            <p class="text-xs leading-relaxed text-muted-foreground">{{ item.description }}</p>
+            <div class="mt-3 flex flex-wrap gap-1" v-if="item.tech">
+              <Badge v-for="t in item.tech" :key="t" variant="outline" class="text-[10px] font-normal text-muted-foreground">{{ t }}</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- Blog / Interest -->
+        <Card v-else-if="item.type === 'post'" class="group transition-shadow hover:shadow-md">
+          <CardContent class="flex min-h-[120px] flex-col justify-center p-4">
+            <span class="mb-2 font-mono text-lg text-muted-foreground/40 transition-colors group-hover:text-primary">{{ item.icon }}</span>
+            <p class="text-sm font-medium leading-snug">{{ item.title }}</p>
+            <p class="mt-1 text-xs text-muted-foreground">{{ item.description }}</p>
+            <Badge variant="secondary" class="mt-3 w-fit text-[10px] font-medium text-pink-600">Blog</Badge>
+          </CardContent>
+        </Card>
+      </component>
+    </div>
+
+    <!-- Footer -->
+    <Separator />
+    <footer class="mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+      <span class="text-xs text-muted-foreground/50">{{ new Date().getFullYear() }} aldas.dev</span>
+      <span class="text-xs text-muted-foreground/50">Made by Aldas 🚀</span>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig()
-const xUsername = config.public.xUsername
+import { ref, computed } from 'vue'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 
-// Fetch about info
-const { data: about } = await useAsyncData('about', () =>
-  queryCollection('about').first()
+const { data: about } = await useAsyncData('about', () => queryCollection('about').first())
+const { data: projects } = await useAsyncData('projects', () => queryCollection('projects').order('order', 'ASC').all())
+const { data: posts } = await useAsyncData('posts', () => queryCollection('blog').order('date', 'DESC').all())
+const { data: socialContent } = await useAsyncData('content', () => queryCollection('content').order('order', 'ASC').all())
+
+const allLinks = computed(() => [
+  ...(about.value?.links || []),
+  { label: 'resume', url: '/resume.pdf' },
+])
+
+const route = useRoute()
+const router = useRouter()
+
+// Badge styles per social platform
+const badgeStyles: Record<string, string> = {
+  YouTube: 'bg-[#ff0000] text-white border-transparent',
+  TikTok: 'bg-[#000000] text-white border-transparent',
+  Twitter: 'bg-[#000000] text-white border-transparent',
+  Instagram: 'bg-[#e1306c] text-white border-transparent',
+  LinkedIn: 'bg-[#0a66c2] text-white border-transparent',
+  Twitch: 'bg-[#9146ff] text-white border-transparent',
+}
+
+// Map data from collections
+const projectItems = computed(() =>
+  (projects.value || []).map((p: any, i: number) => ({
+    id: `proj-${i}`,
+    type: 'project',
+    title: p.title,
+    description: p.description,
+    tech: p.tech,
+    status: p.status,
+    href: p.links?.website || p.links?.github || undefined,
+  }))
 )
 
-// Fetch projects (data collection, no .path)
-const { data: projects } = await useAsyncData('projects', () =>
-  queryCollection('projects').order('order', 'ASC').all()
+const postItems = computed(() =>
+  (posts.value || []).map((p: any) => ({
+    id: `post-${p.path}`,
+    type: 'post',
+    title: p.title,
+    description: p.description,
+    icon: p.icon || '>',
+    to: p.path,
+  }))
 )
 
-// Fetch blog posts
-const { data: posts } = await useAsyncData('posts', () =>
-  queryCollection('blog').order('date', 'DESC').all()
+const contentItems = computed(() =>
+  (socialContent.value || []).map((c: any, i: number) => ({
+    id: `content-${i}`,
+    type: 'content',
+    source: c.source,
+    badgeClass: badgeStyles[c.source] || '',
+    title: c.title,
+    thumbnail: c.thumbnail || '',
+    href: c.url,
+  }))
 )
 
-// Fetch tweets
-const { data: tweetsData, pending: tweetsPending, error: tweetsError } = await useFetch('/api/tweets')
-
-const fallbackTweets = [
-  { id: '1', text: 'Shipped a new feature today. Feels good.', created_at: '2026-03-04T14:32:00.000Z', url: '#' },
-  { id: '2', text: 'The best code is the code you don\'t write.', created_at: '2026-03-02T09:15:00.000Z', url: '#' },
-  { id: '3', text: 'Working on something new. More soon.', created_at: '2026-02-28T22:41:00.000Z', url: '#' },
-  { id: '4', text: 'Go is underrated for web APIs.', created_at: '2026-02-25T11:08:00.000Z', url: '#' },
-  { id: '5', text: 'Terminal > GUI. Fight me.', created_at: '2026-02-20T16:55:00.000Z', url: '#' },
+// Only show tabs that have data
+const allTabs = [
+  { id: 'project', label: 'Projects', items: projectItems },
+  { id: 'post', label: 'Posts', items: postItems },
+  { id: 'content', label: 'On the Web', items: contentItems },
 ]
 
-const displayTweets = computed(() => tweetsData.value?.tweets || fallbackTweets)
+const tabs = computed(() => allTabs.filter(t => t.items.value.length > 0))
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+const defaultTab = computed(() => tabs.value[0]?.id || 'project')
+const initialTab = computed(() => {
+  const q = route.query.tab as string
+  return tabs.value.some(t => t.id === q) ? q : defaultTab.value
+})
+
+const activeTab = ref(initialTab.value)
+
+function setTab(id: string) {
+  activeTab.value = id
+  router.replace({ query: { tab: id } })
 }
+
+const filteredItems = computed(() => {
+  const found = allTabs.find(t => t.id === activeTab.value)
+  return found ? found.items.value : []
+})
 </script>
-
-<style scoped>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-.page {
-  background: #0a0a0a;
-  color: #00ff41;
-  min-height: 100vh;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.logo { font-weight: 500; }
-.links { display: flex; gap: 1.5rem; align-items: center; }
-.links a {
-  color: #00ff4160;
-  text-decoration: none;
-  font-size: 0.85rem;
-  transition: color 0.2s;
-}
-.links a:hover { color: #00ff41; }
-.cli-link {
-  color: #00ff4160;
-  text-decoration: none;
-  font-size: 0.85rem;
-  border: 1px solid #00ff4125;
-  padding: 0.15rem 0.6rem;
-  border-radius: 3px;
-  transition: all 0.2s;
-}
-.cli-link:hover {
-  color: #00ff41;
-  border-color: #00ff41;
-  background: #00ff4110;
-}
-
-main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.hero {
-  padding: 3rem 0 4rem;
-}
-
-.label {
-  font-size: 0.85rem;
-  color: #00ff4160;
-  margin-bottom: 0.5rem;
-}
-
-h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-shadow: 0 0 30px #00ff4120;
-}
-
-.bio {
-  color: #00ff4190;
-  margin-top: 1rem;
-  line-height: 1.6;
-  font-size: 0.95rem;
-}
-
-section {
-  margin-bottom: 3.5rem;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.icon {
-  color: #00ff4140;
-  font-size: 0.85rem;
-}
-
-h2 {
-  font-size: 1.1rem;
-  font-weight: 400;
-}
-
-/* Projects */
-.project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.project-card {
-  border: 1px solid #00ff4118;
-  border-radius: 6px;
-  padding: 1.25rem;
-  transition: all 0.2s;
-  background: rgba(0, 255, 65, 0.02);
-}
-
-.project-card:hover {
-  border-color: #00ff4140;
-  background: rgba(0, 255, 65, 0.05);
-}
-
-.project-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.project-name {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.bullet {
-  width: 6px; height: 6px;
-  background: #00ff41;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.project-status {
-  font-size: 0.75rem;
-  color: #00ff4150;
-}
-
-.project-desc {
-  color: #00ff4170;
-  font-size: 0.85rem;
-  margin-bottom: 0.75rem;
-}
-
-.project-tech {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.75rem;
-}
-
-.project-tech code {
-  font-size: 0.75rem;
-  color: #00ff4150;
-  border: 1px solid #00ff4120;
-  padding: 0.15rem 0.5rem;
-  border-radius: 3px;
-}
-
-.project-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.project-links a {
-  font-size: 0.8rem;
-  color: #00ff4150;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.project-links a:hover {
-  color: #00ff41;
-}
-
-/* Tweets */
-.loading { padding: 1rem 0; }
-.loading-text { color: #00ff4160; font-size: 0.85rem; }
-.blink { animation: blink 1s step-end infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.tweet-error { margin-bottom: 1rem; }
-.dim { color: #00ff4140; font-size: 0.8rem; }
-
-.tweet-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.tweet-card {
-  border: 1px solid #00ff4118;
-  border-radius: 6px;
-  padding: 1.25rem;
-  transition: all 0.2s;
-  background: rgba(0, 255, 65, 0.02);
-}
-
-.tweet-card:hover {
-  border-color: #00ff4140;
-  background: rgba(0, 255, 65, 0.05);
-}
-
-.tweet-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.tweet-handle { font-size: 0.8rem; color: #00ff4180; font-weight: 500; }
-.tweet-date { font-size: 0.75rem; color: #00ff4140; }
-
-.tweet-text {
-  font-size: 0.9rem;
-  color: #00ff41cc;
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-}
-
-.tweet-link {
-  font-size: 0.8rem;
-  color: #00ff4150;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.tweet-link:hover { color: #00ff41; }
-.tweet-link.disabled { pointer-events: none; color: #00ff4125; }
-
-/* Blog / Interests */
-.blog-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.blog-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.25rem;
-  border: 1px solid #00ff4115;
-  border-radius: 6px;
-  transition: all 0.2s;
-  text-decoration: none;
-  color: inherit;
-}
-
-.blog-card:hover {
-  border-color: #00ff4140;
-  background: #00ff4108;
-}
-
-.blog-icon {
-  font-size: 0.85rem;
-  color: #00ff4150;
-  flex-shrink: 0;
-  width: 2rem;
-  text-align: center;
-}
-
-.blog-card h3 {
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-.blog-card p {
-  font-size: 0.8rem;
-  color: #00ff4160;
-}
-
-footer {
-  text-align: center;
-  padding: 3rem 2rem;
-  color: #00ff4130;
-  font-size: 0.8rem;
-}
-
-@media (max-width: 640px) {
-  .hero h1 { font-size: 2rem; }
-}
-</style>
