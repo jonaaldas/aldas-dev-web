@@ -16,7 +16,7 @@
       </div>
     </div>
     <NuxtLink to="/" class="normie-btn">
-      Not a terminal person? Click here
+      ← back to web
     </NuxtLink>
   </div>
 </template>
@@ -481,16 +481,28 @@ function exec(raw) {
 .terminal {
   background: hsl(var(--background));
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: hsl(var(--foreground));
   cursor: text;
+  overflow-x: hidden;
+}
+
+@media (min-width: 640px) {
+  .terminal { font-size: 0.9rem; }
 }
 
 .output {
-  padding: 1.5rem;
+  padding: 1rem;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (min-width: 640px) {
+  .output { padding: 1.5rem; }
 }
 
 .line {
@@ -517,8 +529,9 @@ function exec(raw) {
   outline: none;
   color: hsl(var(--foreground));
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
+  font-size: inherit;
   flex: 1;
+  min-width: 0;
   caret-color: #16a34a;
   padding: 0;
   margin: 0;
@@ -534,18 +547,27 @@ function exec(raw) {
 
 .normie-btn {
   position: fixed;
-  top: 1.25rem;
-  right: 1.5rem;
+  top: 0.75rem;
+  right: 0.75rem;
   z-index: 100;
   color: #a1a1aa;
   text-decoration: none;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   border: 1px solid #e4e4e7;
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 6px;
   transition: all 0.2s;
   background: hsl(var(--background));
+}
+
+@media (min-width: 640px) {
+  .normie-btn {
+    top: 1.25rem;
+    right: 1.5rem;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
 }
 
 .normie-btn:hover {

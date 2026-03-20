@@ -1,13 +1,13 @@
 <template>
   <div class="min-h-screen bg-background text-foreground">
     <!-- Header -->
-    <header class="mx-auto max-w-3xl px-6 pt-16 pb-8">
-      <div class="flex items-start justify-between gap-6">
+    <header class="mx-auto max-w-3xl px-5 pt-10 pb-8 sm:px-6 sm:pt-16">
+      <div class="flex items-start justify-between gap-4 sm:gap-6">
         <div>
-          <h1 class="text-4xl font-bold tracking-tight">{{ about?.name || 'Jonathan' }}</h1>
+          <h1 class="text-2xl font-bold tracking-tight sm:text-4xl">{{ about?.name || 'Jonathan' }}</h1>
           <p class="mt-1 text-sm text-muted-foreground">{{ about?.role }}</p>
         </div>
-        <div class="flex flex-wrap items-center gap-3 pt-2" v-if="about">
+        <div class="home-desktop-nav hidden flex-wrap items-center gap-3 pt-2 sm:flex" v-if="about">
           <nav class="flex flex-wrap gap-3">
             <a
               v-for="link in allLinks"
@@ -15,7 +15,8 @@
               :href="link.url"
               target="_blank"
               class="text-xs text-muted-foreground transition-colors hover:text-foreground"
-            >{{ link.label }}</a>
+              >{{ link.label }}</a
+            >
           </nav>
           <NuxtLink to="/cli">
             <Button variant="outline" size="sm" class="h-7 gap-1.5 rounded-full px-3 font-mono text-[11px]">
@@ -23,6 +24,65 @@
             </Button>
           </NuxtLink>
         </div>
+        <button
+          class="home-mobile-toggle flex h-9 w-9 items-center justify-center rounded-lg border border-border sm:hidden"
+          type="button"
+          :aria-expanded="menuOpen"
+          aria-label="Toggle navigation menu"
+          @click="menuOpen = !menuOpen"
+        >
+          <svg
+            v-if="!menuOpen"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="4" x2="20" y1="12" y2="12" />
+            <line x1="4" x2="20" y1="6" y2="6" />
+            <line x1="4" x2="20" y1="18" y2="18" />
+          </svg>
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
+      <div
+        v-if="menuOpen && about"
+        class="home-mobile-menu mt-4 flex flex-col gap-3 rounded-lg border border-border bg-card p-4 sm:hidden"
+      >
+        <a
+          v-for="link in allLinks"
+          :key="`mobile-${link.url}`"
+          :href="link.url"
+          target="_blank"
+          class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >{{ link.label }}</a
+        >
+        <Separator />
+        <NuxtLink
+          to="/cli"
+          class="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <span class="font-mono text-green-600">&gt;_</span> terminal mode
+        </NuxtLink>
       </div>
       <p class="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">{{ about?.summary }}</p>
     </header>
@@ -37,9 +97,14 @@
         variant="ghost"
         size="sm"
         class="h-7 rounded-full px-3 text-xs"
-        :class="activeTab === tab.id ? 'bg-primary/10 text-foreground font-semibold ring-1 ring-primary/20' : 'text-muted-foreground'"
+        :class="
+          activeTab === tab.id
+            ? 'bg-primary/10 text-foreground font-semibold ring-1 ring-primary/20'
+            : 'text-muted-foreground'
+        "
         @click="setTab(tab.id)"
-      >{{ tab.label }}</Button>
+        >{{ tab.label }}</Button
+      >
     </div>
 
     <!-- Grid -->
@@ -61,7 +126,9 @@
               :alt="item.title"
               class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             />
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+            <div
+              class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
+            >
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-background shadow-lg">
                 <span class="text-sm text-foreground">&#9654;</span>
               </div>
@@ -80,7 +147,11 @@
               <div class="flex items-center gap-2">
                 <span
                   class="h-2 w-2 rounded-full"
-                  :class="item.status === 'LIVE' ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]' : 'bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.4)]'"
+                  :class="
+                    item.status === 'LIVE'
+                      ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]'
+                      : 'bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.4)]'
+                  "
                 />
                 <CardTitle class="text-sm">{{ item.title }}</CardTitle>
               </div>
@@ -90,7 +161,13 @@
           <CardContent class="p-3 pt-1.5">
             <p class="text-xs leading-relaxed text-muted-foreground">{{ item.description }}</p>
             <div class="mt-3 flex flex-wrap gap-1" v-if="item.tech">
-              <Badge v-for="t in item.tech" :key="t" variant="outline" class="text-[10px] font-normal text-muted-foreground">{{ t }}</Badge>
+              <Badge
+                v-for="t in item.tech"
+                :key="t"
+                variant="outline"
+                class="text-[10px] font-normal text-muted-foreground"
+                >{{ t }}</Badge
+              >
             </div>
           </CardContent>
         </Card>
@@ -98,7 +175,9 @@
         <!-- Blog / Interest -->
         <Card v-else-if="item.type === 'post'" class="group transition-shadow hover:shadow-md">
           <CardContent class="flex min-h-[120px] flex-col justify-center p-4">
-            <span class="mb-2 font-mono text-lg text-muted-foreground/40 transition-colors group-hover:text-primary">{{ item.icon }}</span>
+            <span class="mb-2 font-mono text-lg text-muted-foreground/40 transition-colors group-hover:text-primary">{{
+              item.icon
+            }}</span>
             <p class="text-sm font-medium leading-snug">{{ item.title }}</p>
             <p class="mt-1 text-xs text-muted-foreground">{{ item.description }}</p>
             <Badge variant="secondary" class="mt-3 w-fit text-[10px] font-medium text-pink-600">Blog</Badge>
@@ -117,24 +196,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import { ref, computed } from 'vue';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
-const { data: about } = await useAsyncData('about', () => queryCollection('about').first())
-const { data: projects } = await useAsyncData('projects', () => queryCollection('projects').order('order', 'ASC').all())
-const { data: posts } = await useAsyncData('posts', () => queryCollection('blog').order('date', 'DESC').all())
-const { data: socialContent } = await useAsyncData('content', () => queryCollection('content').order('order', 'ASC').all())
+const menuOpen = ref(false);
 
-const allLinks = computed(() => [
-  ...(about.value?.links || []),
-  { label: 'resume', url: '/resume.pdf' },
-])
+useHead({
+  style: [
+    {
+      key: 'home-header-first-paint',
+      children: `
+        .home-desktop-nav { display: none; }
+        .home-mobile-toggle { display: flex; }
+        @media (min-width: 640px) {
+          .home-desktop-nav { display: flex; }
+          .home-mobile-toggle { display: none; }
+          .home-mobile-menu { display: none !important; }
+        }
+      `,
+    },
+  ],
+});
 
-const route = useRoute()
-const router = useRouter()
+const { data: about } = await useAsyncData('about', () => queryCollection('about').first());
+const { data: projects } = await useAsyncData('projects', () =>
+  queryCollection('projects').order('order', 'ASC').all()
+);
+const { data: posts } = await useAsyncData('posts', () => queryCollection('blog').order('date', 'DESC').all());
+const { data: socialContent } = await useAsyncData('content', () =>
+  queryCollection('content').order('order', 'ASC').all()
+);
+
+const allLinks = computed(() => [...(about.value?.links || []), { label: 'resume', url: '/resume.pdf' }]);
+
+const route = useRoute();
+const router = useRouter();
 
 // Badge styles per social platform
 const badgeStyles: Record<string, string> = {
@@ -144,7 +243,7 @@ const badgeStyles: Record<string, string> = {
   Instagram: 'bg-[#e1306c] text-white border-transparent',
   LinkedIn: 'bg-[#0a66c2] text-white border-transparent',
   Twitch: 'bg-[#9146ff] text-white border-transparent',
-}
+};
 
 // Map data from collections
 const projectItems = computed(() =>
@@ -157,7 +256,7 @@ const projectItems = computed(() =>
     status: p.status,
     href: p.links?.website || p.links?.github || undefined,
   }))
-)
+);
 
 const postItems = computed(() =>
   (posts.value || []).map((p: any) => ({
@@ -168,7 +267,7 @@ const postItems = computed(() =>
     icon: p.icon || '>',
     to: p.path,
   }))
-)
+);
 
 const contentItems = computed(() =>
   (socialContent.value || []).map((c: any, i: number) => ({
@@ -180,32 +279,32 @@ const contentItems = computed(() =>
     thumbnail: c.thumbnail || '',
     href: c.url,
   }))
-)
+);
 
 // Only show tabs that have data
 const allTabs = [
   { id: 'project', label: 'Projects', items: projectItems },
   { id: 'post', label: 'Posts', items: postItems },
   { id: 'content', label: 'On the Web', items: contentItems },
-]
+];
 
-const tabs = computed(() => allTabs.filter(t => t.items.value.length > 0))
+const tabs = computed(() => allTabs.filter((t) => t.items.value.length > 0));
 
-const defaultTab = computed(() => tabs.value[0]?.id || 'project')
+const defaultTab = computed(() => tabs.value[0]?.id || 'project');
 const initialTab = computed(() => {
-  const q = route.query.tab as string
-  return tabs.value.some(t => t.id === q) ? q : defaultTab.value
-})
+  const q = route.query.tab as string;
+  return tabs.value.some((t) => t.id === q) ? q : defaultTab.value;
+});
 
-const activeTab = ref(initialTab.value)
+const activeTab = ref(initialTab.value);
 
 function setTab(id: string) {
-  activeTab.value = id
-  router.replace({ query: { tab: id } })
+  activeTab.value = id;
+  router.replace({ query: { tab: id } });
 }
 
 const filteredItems = computed(() => {
-  const found = allTabs.find(t => t.id === activeTab.value)
-  return found ? found.items.value : []
-})
+  const found = allTabs.find((t) => t.id === activeTab.value);
+  return found ? found.items.value : [];
+});
 </script>
