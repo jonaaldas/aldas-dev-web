@@ -4,8 +4,8 @@
     <header class="mx-auto max-w-3xl px-5 pt-10 pb-8 sm:px-6 sm:pt-16">
       <div class="flex items-start justify-between gap-4 sm:gap-6">
         <div>
-          <h1 class="text-2xl font-bold tracking-tight sm:text-4xl">{{ about?.name || 'Jonathan' }}</h1>
-          <p class="mt-1 text-sm text-muted-foreground">{{ about?.role }}</p>
+          <h1 v-if="about?.name" class="text-2xl font-bold tracking-tight sm:text-4xl">{{ about.name }}</h1>
+          <p v-if="about?.role" class="mt-1 text-sm text-muted-foreground">{{ about.role }}</p>
         </div>
         <div class="home-desktop-nav hidden flex-wrap items-center gap-3 pt-2 sm:flex" v-if="about">
           <nav class="flex flex-wrap gap-3">
@@ -18,6 +18,9 @@
               >{{ link.label }}</a
             >
           </nav>
+          <NuxtLink to="/bucket-list">
+            <Button variant="ghost" size="sm" class="h-7 rounded-full px-3 font-mono text-[11px]">bucket list</Button>
+          </NuxtLink>
           <NuxtLink to="/cli">
             <Button variant="outline" size="sm" class="h-7 gap-1.5 rounded-full px-3 font-mono text-[11px]">
               <span class="text-green-600">&gt;_</span> cli
@@ -83,8 +86,14 @@
         >
           <span class="font-mono text-green-600">&gt;_</span> terminal mode
         </NuxtLink>
+        <NuxtLink
+          to="/bucket-list"
+          class="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <span class="font-mono">#</span> bucket list
+        </NuxtLink>
       </div>
-      <p class="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">{{ about?.summary }}</p>
+      <p v-if="about?.summary" class="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">{{ about.summary }}</p>
     </header>
 
     <Separator class="mx-auto max-w-3xl" />
@@ -230,7 +239,7 @@ const { data: socialContent } = await useAsyncData('content', () =>
   queryCollection('content').order('order', 'ASC').all()
 );
 
-const allLinks = computed(() => [...(about.value?.links || []), { label: 'resume', url: '/resume.pdf' }]);
+const allLinks = computed(() => about.value?.links || []);
 
 const route = useRoute();
 const router = useRouter();

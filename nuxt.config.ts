@@ -48,19 +48,10 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/content', 'nuxt-studio', 'shadcn-nuxt'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/content', 'shadcn-nuxt'],
 
   shadcn: {
     prefix: '',
     componentDir: '@/components/ui',
-  },
-
-  studio: {
-    repository: {
-      provider: 'github',
-      owner: 'jonaaldas',
-      repo: 'aldas-dev-web',
-      branch: 'main',
-    },
   },
 });

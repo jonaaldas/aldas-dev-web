@@ -1,6 +1,4 @@
-# Nuxt Minimal Starter
-
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# aldas.dev
 
 ## Setup
 
@@ -72,4 +70,15 @@ yarn preview
 bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Content
+
+Site data is loaded from `content/` via `@nuxt/content`.
+The content folders are intentionally empty so you can add your own entries.
+
+## Deploy To Vercel
+
+This project is ready for Vercel's standard Nuxt deployment flow:
+
+1. Import the repository into Vercel.
+2. Keep the detected Nuxt build settings.
+3. Add the environment variables from `.env.example`.

@@ -57,5 +57,16 @@ export default defineContentConfig({
         icon: z.string().optional(),
       }),
     }),
+    bucketList: defineCollection({
+      type: 'data',
+      source: 'bucket-list/*.json',
+      schema: z.object({
+        title: z.string(),
+        want: z.string(),
+        progress: z.string(),
+        status: z.enum(['Planned', 'In Progress', 'Booked', 'Done']),
+        order: z.number().optional(),
+      }),
+    }),
   },
 })
