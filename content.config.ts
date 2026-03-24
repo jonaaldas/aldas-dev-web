@@ -1,5 +1,5 @@
-import { defineContentConfig, defineCollection } from '@nuxt/content'
-import { z } from 'zod'
+import { defineContentConfig, defineCollection } from '@nuxt/content';
+import { z } from 'zod';
 
 export default defineContentConfig({
   collections: {
@@ -11,10 +11,12 @@ export default defineContentConfig({
         role: z.string(),
         summary: z.string(),
         location: z.string(),
-        links: z.array(z.object({
-          label: z.string(),
-          url: z.string(),
-        })),
+        links: z.array(
+          z.object({
+            label: z.string(),
+            url: z.string(),
+          })
+        ),
       }),
     }),
     projects: defineCollection({
@@ -69,4 +71,4 @@ export default defineContentConfig({
       }),
     }),
   },
-})
+});

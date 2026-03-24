@@ -1,18 +1,18 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
-const umamiWebsiteId =
-  process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID || 'db0fe301-1e73-4e0e-b227-aa45eda1e015';
-const script = isProduction && umamiWebsiteId
-  ? [
-      {
-        defer: true,
-        src: '/stats/script.js',
-        'data-host-url': '/stats',
-        'data-website-id': umamiWebsiteId,
-      },
-    ]
-  : [];
+const umamiWebsiteId = process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID || 'db0fe301-1e73-4e0e-b227-aa45eda1e015';
+const script =
+  isProduction && umamiWebsiteId
+    ? [
+        {
+          defer: true,
+          src: '/stats/script.js',
+          'data-host-url': '/stats',
+          'data-website-id': umamiWebsiteId,
+        },
+      ]
+    : [];
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -48,10 +48,14 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/content', 'shadcn-nuxt'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/content', 'shadcn-nuxt', 'nuxt-studio'],
 
   shadcn: {
     prefix: '',
     componentDir: '@/components/ui',
+  },
+
+  studio: {
+    route: '/admin', // default: '/_studio'
   },
 });
