@@ -2,19 +2,23 @@
   "links": [
     {
       "label": "x.com",
-      "url": "https://x.com/aldas"
+      "url": "https://x.com/aldasdev"
     },
     {
       "label": "github",
-      "url": "https://github.com/aldas"
+      "url": "https://github.com/jonaaldas"
     },
     {
       "label": "email",
-      "url": "mailto:hello@aldas.dev"
+      "url": "mailto:j@aldas.dev"
+    },
+    {
+      "label": "resume",
+      "url": "www.google.com"
     }
   ],
   "location": "The Internet",
   "name": "Jonathan",
   "role": "Developer & Builder",
-  "summary": "I am a Tinkerer, builder and curious about building cool things with code. I love experimenting with tech and see what sticks. I also love Italy, Watches, Clothes and AC Milan fan."
+  "summary": "I am a Tinkerer, builder and curious about interesting technologies. I love experimenting with tech and see what sticks. I also love Italy, Watches, Clothes and AC Milan fan."
 }
