@@ -72,8 +72,7 @@ bun run preview
 
 ## Content
 
-Site data is loaded from `content/` via `@nuxt/content`.
-The content folders are intentionally empty so you can add your own entries.
+Site data is loaded from JSON files in `app/data/`.
 
 ## Deploy To Vercel
 

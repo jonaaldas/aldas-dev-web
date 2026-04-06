@@ -1,0 +1,15 @@
+import type { AboutData } from '@/data/types';
+
+export const about: AboutData = {
+  name: 'Jonathan',
+  role: 'Developer & Builder',
+  summary:
+    'I am a Tinkerer, builder and curious about interesting technologies. I love experimenting with tech and see what sticks. I also love Italy, Watches, Clothes and AC Milan fan.',
+  location: 'The Internet',
+  links: [
+    { label: 'x.com', url: 'https://x.com/aldasdev' },
+    { label: 'github', url: 'https://github.com/jonaaldas' },
+    { label: 'email', url: 'mailto:j@aldas.dev' },
+    { label: 'resume', url: 'www.google.com' },
+  ],
+};

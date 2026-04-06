@@ -120,7 +120,7 @@
 
           <div
             v-for="item in bucketList"
-            :key="item.id"
+            :key="`${item.title}-${item.order ?? 0}`"
             class="grid gap-4 border-b border-border px-4 py-4 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
           >
             <div>
@@ -159,6 +159,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useSiteData } from '@/composables/useSiteData';
 
 const menuOpen = ref(false);
 
@@ -166,7 +167,7 @@ useHead({
   style: [
     {
       key: 'bucket-list-header-first-paint',
-      children: `
+      innerHTML: `
         .home-desktop-nav { display: none; }
         .home-mobile-toggle { display: flex; }
         @media (min-width: 640px) {
@@ -184,12 +185,9 @@ useSeoMeta({
   description: 'A simple list of things I want to do and how they are progressing.',
 });
 
-const { data: about } = await useAsyncData('bucket-list-about', () => queryCollection('about').first());
-const { data: bucketList } = await useAsyncData('bucket-list', () =>
-  queryCollection('bucketList').order('order', 'ASC').all()
-);
+const { about, bucketList } = useSiteData();
 
-const allLinks = computed(() => about.value?.links || []);
+const allLinks = computed(() => about.links || []);
 
 function statusClass(status: string) {
   switch (status) {

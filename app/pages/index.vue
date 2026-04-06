@@ -117,18 +117,19 @@
     </div>
 
     <!-- Grid -->
-    <div v-if="tabs.length > 0" class="mx-auto max-w-3xl columns-1 gap-3 px-6 pb-16 sm:columns-2 lg:columns-3">
+    <div
+      v-if="tabs.length > 0 && activeTab === 'content'"
+      class="mx-auto max-w-3xl columns-1 gap-3 px-6 pb-16 sm:columns-2 lg:columns-3"
+    >
       <component
-        :is="item.href ? 'a' : item.to ? 'NuxtLink' : 'div'"
-        v-for="item in filteredItems"
+        :is="'a'"
+        v-for="item in contentItems"
         :key="item.id"
         :href="item.href"
-        :to="item.to"
-        :target="item.href ? '_blank' : undefined"
+        target="_blank"
         class="mb-3 block break-inside-avoid"
       >
-        <!-- Content card (YouTube, TikTok, etc.) -->
-        <Card v-if="item.type === 'content'" class="group overflow-hidden transition-shadow hover:shadow-md">
+        <Card class="group overflow-hidden transition-shadow hover:shadow-md">
           <div v-if="item.thumbnail" class="relative aspect-video overflow-hidden bg-muted">
             <img
               :src="item.thumbnail"
@@ -148,9 +149,22 @@
             <Badge class="shrink-0 text-[10px] font-semibold" :class="item.badgeClass">{{ item.source }}</Badge>
           </CardContent>
         </Card>
+      </component>
+    </div>
 
-        <!-- Project -->
-        <Card v-else-if="item.type === 'project'" class="transition-shadow hover:shadow-md">
+    <div
+      v-else-if="tabs.length > 0"
+      class="mx-auto max-w-3xl columns-1 gap-3 px-6 pb-16 sm:columns-2 lg:columns-3"
+    >
+      <component
+        :is="item.href ? 'a' : 'div'"
+        v-for="item in projectItems"
+        :key="item.id"
+        :href="item.href"
+        :target="item.href ? '_blank' : undefined"
+        class="mb-3 block break-inside-avoid"
+      >
+        <Card class="transition-shadow hover:shadow-md">
           <CardHeader class="space-y-1.5 p-3 pb-0">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
@@ -169,7 +183,7 @@
           </CardHeader>
           <CardContent class="p-3 pt-1.5">
             <p class="text-xs leading-relaxed text-muted-foreground">{{ item.description }}</p>
-            <div class="mt-3 flex flex-wrap gap-1" v-if="item.tech">
+            <div v-if="item.tech.length > 0" class="mt-3 flex flex-wrap gap-1">
               <Badge
                 v-for="t in item.tech"
                 :key="t"
@@ -178,18 +192,6 @@
                 >{{ t }}</Badge
               >
             </div>
-          </CardContent>
-        </Card>
-
-        <!-- Blog / Interest -->
-        <Card v-else-if="item.type === 'post'" class="group transition-shadow hover:shadow-md">
-          <CardContent class="flex min-h-[120px] flex-col justify-center p-4">
-            <span class="mb-2 font-mono text-lg text-muted-foreground/40 transition-colors group-hover:text-primary">{{
-              item.icon
-            }}</span>
-            <p class="text-sm font-medium leading-snug">{{ item.title }}</p>
-            <p class="mt-1 text-xs text-muted-foreground">{{ item.description }}</p>
-            <Badge variant="secondary" class="mt-3 w-fit text-[10px] font-medium text-pink-600">Blog</Badge>
           </CardContent>
         </Card>
       </component>
@@ -210,6 +212,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useSiteData } from '@/composables/useSiteData';
 
 const menuOpen = ref(false);
 
@@ -217,7 +220,7 @@ useHead({
   style: [
     {
       key: 'home-header-first-paint',
-      children: `
+      innerHTML: `
         .home-desktop-nav { display: none; }
         .home-mobile-toggle { display: flex; }
         @media (min-width: 640px) {
@@ -230,19 +233,30 @@ useHead({
   ],
 });
 
-const { data: about } = await useAsyncData('about', () => queryCollection('about').first());
-const { data: projects } = await useAsyncData('projects', () =>
-  queryCollection('projects').order('order', 'ASC').all()
-);
-const { data: posts } = await useAsyncData('posts', () => queryCollection('blog').order('date', 'DESC').all());
-const { data: socialContent } = await useAsyncData('content', () =>
-  queryCollection('content').order('order', 'ASC').all()
-);
+const { about, projects, socialContent } = useSiteData();
 
-const allLinks = computed(() => about.value?.links || []);
+const allLinks = computed(() => about.links || []);
 
 const route = useRoute();
 const router = useRouter();
+
+type TabId = 'project' | 'content';
+type ProjectCardItem = {
+  id: string;
+  title: string;
+  description: string;
+  tech: string[];
+  status: string;
+  href?: string;
+};
+type ContentCardItem = {
+  id: string;
+  title: string;
+  source: string;
+  badgeClass: string;
+  thumbnail?: string;
+  href: string;
+};
 
 // Badge styles per social platform
 const badgeStyles: Record<string, string> = {
@@ -255,10 +269,9 @@ const badgeStyles: Record<string, string> = {
 };
 
 // Map data from collections
-const projectItems = computed(() =>
-  (projects.value || []).map((p: any, i: number) => ({
+const projectItems = computed<ProjectCardItem[]>(() =>
+  projects.map((p, i: number) => ({
     id: `proj-${i}`,
-    type: 'project',
     title: p.title,
     description: p.description,
     tech: p.tech,
@@ -267,21 +280,9 @@ const projectItems = computed(() =>
   }))
 );
 
-const postItems = computed(() =>
-  (posts.value || []).map((p: any) => ({
-    id: `post-${p.path}`,
-    type: 'post',
-    title: p.title,
-    description: p.description,
-    icon: p.icon || '>',
-    to: p.path,
-  }))
-);
-
-const contentItems = computed(() =>
-  (socialContent.value || []).map((c: any, i: number) => ({
+const contentItems = computed<ContentCardItem[]>(() =>
+  socialContent.map((c, i: number) => ({
     id: `content-${i}`,
-    type: 'content',
     source: c.source,
     badgeClass: badgeStyles[c.source] || '',
     title: c.title,
@@ -293,27 +294,26 @@ const contentItems = computed(() =>
 // Only show tabs that have data
 const allTabs = [
   { id: 'project', label: 'Projects', items: projectItems },
-  { id: 'post', label: 'Posts', items: postItems },
   { id: 'content', label: 'On the Web', items: contentItems },
-];
+] as const;
 
 const tabs = computed(() => allTabs.filter((t) => t.items.value.length > 0));
 
-const defaultTab = computed(() => tabs.value[0]?.id || 'project');
-const initialTab = computed(() => {
-  const q = route.query.tab as string;
-  return tabs.value.some((t) => t.id === q) ? q : defaultTab.value;
+const defaultTab = computed<TabId>(() => tabs.value[0]?.id || 'project');
+const initialTab = computed<TabId>(() => {
+  const q = route.query.tab as TabId | undefined;
+  if (q && tabs.value.some((t) => t.id === q)) {
+    return q;
+  }
+
+  return defaultTab.value;
 });
 
-const activeTab = ref(initialTab.value);
+const activeTab = ref<TabId>(initialTab.value);
 
-function setTab(id: string) {
+function setTab(id: TabId) {
   activeTab.value = id;
   router.replace({ query: { tab: id } });
 }
 
-const filteredItems = computed(() => {
-  const found = allTabs.find((t) => t.id === activeTab.value);
-  return found ? found.items.value : [];
-});
 </script>

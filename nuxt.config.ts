@@ -5,13 +5,13 @@ const umamiWebsiteId = process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID || 'db0fe301-1e7
 const script =
   isProduction && umamiWebsiteId
     ? [
-        {
-          defer: true,
-          src: '/stats/script.js',
-          'data-host-url': '/stats',
-          'data-website-id': umamiWebsiteId,
-        },
-      ]
+      {
+        defer: true,
+        src: '/stats/script.js',
+        'data-host-url': '/stats',
+        'data-website-id': umamiWebsiteId,
+      },
+    ]
     : [];
 
 export default defineNuxtConfig({
@@ -48,14 +48,19 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/content', 'shadcn-nuxt', 'nuxt-studio'],
+  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt'],
 
   shadcn: {
     prefix: '',
     componentDir: '@/components/ui',
   },
 
-  studio: {
-    route: '/admin', // default: '/_studio'
+  routeRules: {
+    // Prerender static pages at build time — served as pure HTML from CDN
+    '/': { prerender: true },
+    '/bucket-list': { prerender: true },
+    '/cli': { prerender: true },
+    // API routes stay dynamic
+    '/api/**': { cache: false },
   },
 });

@@ -21,18 +21,9 @@
 
 <script setup>
 import { ref, nextTick, onMounted, computed } from 'vue';
+import { useSiteData } from '@/composables/useSiteData';
 
-const { data: about } = await useAsyncData('cli-about', () => queryCollection('about').first());
-const { data: projects } = await useAsyncData('cli-projects', () =>
-  queryCollection('projects').order('order', 'ASC').all()
-);
-const { data: posts } = await useAsyncData('cli-posts', () => queryCollection('blog').order('date', 'DESC').all());
-const { data: socialContent } = await useAsyncData('cli-content', () =>
-  queryCollection('content').order('order', 'ASC').all()
-);
-const { data: bucketList } = await useAsyncData('cli-bucket-list', () =>
-  queryCollection('bucketList').order('order', 'ASC').all()
-);
+const { about, projects, socialContent, bucketList } = useSiteData();
 
 const input = ref('');
 const lines = ref([]);
@@ -57,7 +48,7 @@ function createFile(content) {
 }
 
 const projectFiles = Object.fromEntries(
-  (projects.value || []).map((project) => [
+  projects.map((project) => [
     `${toSlug(project.title)}.md`,
     createFile(
       `# ${project.title}
@@ -74,21 +65,8 @@ ${project.links.website ? `  website: ${project.links.website}\n` : ''}${project
   ])
 );
 
-const postFiles = Object.fromEntries(
-  (posts.value || []).map((post) => [
-    `${toSlug(post.title)}.md`,
-    createFile(
-      `# ${post.title}
-${post.description}
-Date: ${post.date}
-Route: ${post.path}
-${post.icon ? `Icon: ${post.icon}\n` : ''}Read on site: https://aldas.dev${post.path}`.trim()
-    ),
-  ])
-);
-
 const contentFiles = Object.fromEntries(
-  (socialContent.value || []).map((item) => [
+  socialContent.map((item) => [
     `${toSlug(item.title)}.txt`,
     createFile(`Title: ${item.title}
 Source: ${item.source}
@@ -98,7 +76,7 @@ URL: ${item.url}${item.thumbnail ? `\nThumbnail: ${item.thumbnail}` : ''}`),
 );
 
 const bucketListFiles = Object.fromEntries(
-  (bucketList.value || []).map((item) => {
+  bucketList.map((item) => {
     return [
       `${toSlug(item.title)}.md`,
       createFile(`# ${item.title}
@@ -113,14 +91,14 @@ ${item.progress}`),
   })
 );
 
-const aboutFile = createFile(`Name:     ${about.value?.name || ''}
-Role:     ${about.value?.role || ''}
-Location: ${about.value?.location || ''}
+const aboutFile = createFile(`Name:     ${about?.name || ''}
+Role:     ${about?.role || ''}
+Location: ${about?.location || ''}
 
-${about.value?.summary || ''}`);
+${about?.summary || ''}`);
 
 const contactFile = createFile(`Links:
-${(about.value?.links || []).map((link) => `  ${link.label}: ${link.url}`).join('\n')}
+${(about?.links || []).map((link) => `  ${link.label}: ${link.url}`).join('\n')}
 Website:  https://aldas.dev`);
 
 const fs = {
@@ -134,10 +112,6 @@ const fs = {
       'on-the-web': {
         type: 'dir',
         children: contentFiles,
-      },
-      interests: {
-        type: 'dir',
-        children: postFiles,
       },
       'bucket-list': {
         type: 'dir',
