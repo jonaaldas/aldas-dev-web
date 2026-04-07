@@ -1,5 +1,7 @@
+export type SiteLinkIconName = 'x' | 'github' | 'email' | 'resume';
+
 export type SiteLink = {
-  label: string;
+  icon: SiteLinkIconName;
   url: string;
 };
 
@@ -37,10 +39,9 @@ export type SocialContentData = {
   order?: number;
 };
 
-export type BucketListStatus = 'Planned' | 'In Progress' | 'Booked' | 'Done';
+export type BucketListStatus = 'Planned' | 'In Progress' | 'Done';
 
 export type BucketListItem = {
-  title: string;
   want: string;
   progress: string;
   status: BucketListStatus;

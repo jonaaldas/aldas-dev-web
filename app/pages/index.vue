@@ -1,103 +1,5 @@
 <template>
   <div class="min-h-screen bg-background text-foreground">
-    <!-- Header -->
-    <header class="mx-auto max-w-3xl px-5 pt-10 pb-8 sm:px-6 sm:pt-16">
-      <div class="flex items-start justify-between gap-4 sm:gap-6">
-        <div>
-          <h1 v-if="about?.name" class="text-2xl font-bold tracking-tight sm:text-4xl">{{ about.name }}</h1>
-          <p v-if="about?.role" class="mt-1 text-sm text-muted-foreground">{{ about.role }}</p>
-        </div>
-        <div class="home-desktop-nav hidden flex-wrap items-center gap-3 pt-2 sm:flex" v-if="about">
-          <nav class="flex flex-wrap gap-3">
-            <a
-              v-for="link in allLinks"
-              :key="link.url"
-              :href="link.url"
-              target="_blank"
-              class="text-xs text-muted-foreground transition-colors hover:text-foreground"
-              >{{ link.label }}</a
-            >
-          </nav>
-          <NuxtLink to="/bucket-list">
-            <Button variant="ghost" size="sm" class="h-7 rounded-full px-3 font-mono text-[11px]">bucket list</Button>
-          </NuxtLink>
-          <NuxtLink to="/cli">
-            <Button variant="outline" size="sm" class="h-7 gap-1.5 rounded-full px-3 font-mono text-[11px]">
-              <span class="text-green-600">&gt;_</span> cli
-            </Button>
-          </NuxtLink>
-        </div>
-        <button
-          class="home-mobile-toggle flex h-9 w-9 items-center justify-center rounded-lg border border-border sm:hidden"
-          type="button"
-          :aria-expanded="menuOpen"
-          aria-label="Toggle navigation menu"
-          @click="menuOpen = !menuOpen"
-        >
-          <svg
-            v-if="!menuOpen"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="4" x2="20" y1="12" y2="12" />
-            <line x1="4" x2="20" y1="6" y2="6" />
-            <line x1="4" x2="20" y1="18" y2="18" />
-          </svg>
-          <svg
-            v-else
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
-        </button>
-      </div>
-      <div
-        v-if="menuOpen && about"
-        class="home-mobile-menu mt-4 flex flex-col gap-3 rounded-lg border border-border bg-card p-4 sm:hidden"
-      >
-        <a
-          v-for="link in allLinks"
-          :key="`mobile-${link.url}`"
-          :href="link.url"
-          target="_blank"
-          class="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >{{ link.label }}</a
-        >
-        <Separator />
-        <NuxtLink
-          to="/cli"
-          class="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <span class="font-mono text-green-600">&gt;_</span> terminal mode
-        </NuxtLink>
-        <NuxtLink
-          to="/bucket-list"
-          class="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <span class="font-mono">#</span> bucket list
-        </NuxtLink>
-      </div>
-      <p v-if="about?.summary" class="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">{{ about.summary }}</p>
-    </header>
-
-    <Separator class="mx-auto max-w-3xl" />
-
     <!-- Filters — only shown if there's data -->
     <div v-if="tabs.length > 0" class="mx-auto flex max-w-3xl gap-2 px-6 py-4">
       <Button
@@ -207,35 +109,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useSiteData } from '@/composables/useSiteData';
 
-const menuOpen = ref(false);
-
-useHead({
-  style: [
-    {
-      key: 'home-header-first-paint',
-      innerHTML: `
-        .home-desktop-nav { display: none; }
-        .home-mobile-toggle { display: flex; }
-        @media (min-width: 640px) {
-          .home-desktop-nav { display: flex; }
-          .home-mobile-toggle { display: none; }
-          .home-mobile-menu { display: none !important; }
-        }
-      `,
-    },
-  ],
-});
-
 const { about, projects, socialContent } = useSiteData();
-
-const allLinks = computed(() => about.links || []);
 
 const route = useRoute();
 const router = useRouter();

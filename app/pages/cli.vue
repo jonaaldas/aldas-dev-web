@@ -78,8 +78,8 @@ URL: ${item.url}${item.thumbnail ? `\nThumbnail: ${item.thumbnail}` : ''}`),
 const bucketListFiles = Object.fromEntries(
   bucketList.map((item) => {
     return [
-      `${toSlug(item.title)}.md`,
-      createFile(`# ${item.title}
+      `${toSlug(item.want)}.md`,
+      createFile(`# ${item.want}
 Status: ${item.status}
 
 What I want:
@@ -98,8 +98,21 @@ Location: ${about?.location || ''}
 ${about?.summary || ''}`);
 
 const contactFile = createFile(`Links:
-${(about?.links || []).map((link) => `  ${link.label}: ${link.url}`).join('\n')}
+${(about?.links || []).map((link) => `  ${linkLabel(link.icon)}: ${link.url}`).join('\n')}
 Website:  https://aldas.dev`);
+
+function linkLabel(icon) {
+  switch (icon) {
+    case 'x':
+      return 'X';
+    case 'github':
+      return 'GitHub';
+    case 'email':
+      return 'Email';
+    case 'resume':
+      return 'Resume';
+  }
+}
 
 const fs = {
   '~': {
