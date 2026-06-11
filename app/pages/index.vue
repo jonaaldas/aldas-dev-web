@@ -56,18 +56,15 @@
 
     <div
       v-else-if="tabs.length > 0"
-      class="mx-auto max-w-3xl columns-1 gap-3 px-6 pb-16 sm:columns-2 lg:columns-3"
+      class="mx-auto max-w-3xl columns-1 gap-4 px-6 pb-16 sm:columns-2 lg:columns-3"
     >
-      <component
-        :is="item.href ? 'a' : 'div'"
+      <div
         v-for="item in projectItems"
         :key="item.id"
-        :href="item.href"
-        :target="item.href ? '_blank' : undefined"
-        class="mb-3 block break-inside-avoid"
+        class="mb-4 block break-inside-avoid"
       >
         <Card class="transition-shadow hover:shadow-md">
-          <CardHeader class="space-y-1.5 p-3 pb-0">
+          <CardHeader class="space-y-2 p-4 pb-0">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span
@@ -78,12 +75,13 @@
                       : 'bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.4)]'
                   "
                 />
-                <CardTitle class="text-sm">{{ item.title }}</CardTitle>
+                <span class="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{{ item.status }}</span>
               </div>
-              <Badge variant="secondary" class="text-[10px] font-medium text-indigo-600">Project</Badge>
+              <Badge variant="secondary" class="text-[10px] font-medium">Project</Badge>
             </div>
+            <CardTitle class="text-base leading-snug">{{ item.title }}</CardTitle>
           </CardHeader>
-          <CardContent class="p-3 pt-1.5">
+          <CardContent class="p-4 pt-2">
             <p class="text-xs leading-relaxed text-muted-foreground">{{ item.description }}</p>
             <div v-if="item.tech.length > 0" class="mt-3 flex flex-wrap gap-1">
               <Badge
@@ -94,9 +92,36 @@
                 >{{ t }}</Badge
               >
             </div>
+            <div
+              v-if="item.website || item.github"
+              class="mt-4 flex items-center gap-2 border-t border-border pt-3"
+            >
+              <a
+                v-if="item.website"
+                :href="item.website"
+                target="_blank"
+                rel="noreferrer"
+                class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+                :aria-label="`Open ${item.title} site`"
+              >
+                <ExternalLink class="h-3 w-3" />
+                <span>Website</span>
+              </a>
+              <a
+                v-if="item.github"
+                :href="item.github"
+                target="_blank"
+                rel="noreferrer"
+                class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+                :aria-label="`Open ${item.title} GitHub repository`"
+              >
+                <Github class="h-3 w-3" />
+                <span>GitHub</span>
+              </a>
+            </div>
           </CardContent>
         </Card>
-      </component>
+      </div>
     </div>
 
     <!-- Footer -->
@@ -110,6 +135,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { ExternalLink, Github } from 'lucide-vue-next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -128,7 +154,8 @@ type ProjectCardItem = {
   description: string;
   tech: string[];
   status: string;
-  href?: string;
+  website?: string;
+  github?: string;
 };
 type ContentCardItem = {
   id: string;
@@ -157,7 +184,8 @@ const projectItems = computed<ProjectCardItem[]>(() =>
     description: p.description,
     tech: p.tech,
     status: p.status,
-    href: p.links?.website || p.links?.github || undefined,
+    website: p.links?.website || undefined,
+    github: p.links?.github || undefined,
   }))
 );
 
