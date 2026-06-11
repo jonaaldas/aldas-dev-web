@@ -2,19 +2,6 @@ import type { ProjectData } from '@/data/types';
 
 export const projects: ProjectData[] = [
   {
-    title: 'Mercadona Groceries Bot',
-    description: 'Mercadona AI bot that adds groceries to yout cart.',
-    paragraphs: ['Longer story paragraph one.', 'Paragraph two.'],
-    tech: ['TypeScript', 'Vue', 'AI SDK'],
-    status: 'LIVE',
-    links: {
-      website: 'https://mercadonabot.com',
-      github: 'https://github.com/jonaaldas/marcadona_api_agent',
-    },
-    date: '2026-04-06',
-    order: 1,
-  },
-  {
     title: 'Finance Dashboard',
     description: 'Personal finance dashboard with a live, auto-login sandbox demo.',
     paragraphs: [
@@ -28,7 +15,7 @@ export const projects: ProjectData[] = [
       github: 'https://github.com/jonaaldas/new_money_dashboard',
     },
     date: '2026-04-06',
-    order: 2,
+    order: 1,
   },
   {
     title: 'Playlist CLI',
@@ -43,7 +30,7 @@ export const projects: ProjectData[] = [
       github: 'https://github.com/jonaaldas/playlist',
     },
     date: '2026-06-11',
-    order: 3,
+    order: 2,
   },
   {
     title: 'Claude Code Sessions',
@@ -59,6 +46,6 @@ export const projects: ProjectData[] = [
       github: 'https://github.com/jonaaldas/claude-code-sessions',
     },
     date: '2026-06-11',
-    order: 4,
+    order: 3,
   },
 ];
