@@ -10,6 +10,8 @@
       </div>
 
       <div class="hidden flex-wrap items-center gap-3 pt-2 sm:flex">
+        <ModeToggle />
+
         <nav class="flex flex-wrap gap-3">
           <a
             v-for="link in allLinks"
@@ -78,6 +80,9 @@
     </div>
 
     <div v-if="menuOpen" class="mt-4 flex flex-col gap-3 rounded-lg border border-border bg-card p-4 sm:hidden">
+      <div class="flex justify-end">
+        <ModeToggle />
+      </div>
       <div class="flex flex-wrap gap-3">
         <a
           v-for="link in allLinks"
@@ -114,6 +119,7 @@
 <script setup lang="ts">
 import { computed, markRaw, ref } from 'vue';
 import { FileText, Github, Mail } from 'lucide-vue-next';
+import ModeToggle from '@/components/ModeToggle.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import type { AboutData, SiteLinkIconName } from '@/data/types';
