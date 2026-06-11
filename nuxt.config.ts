@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite';
+
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
 const umamiWebsiteId = process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID || 'db0fe301-1e73-4e0e-b227-aa45eda1e015';
@@ -48,7 +50,13 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt', '@nuxtjs/color-mode'],
+  modules: ['shadcn-nuxt', '@nuxtjs/color-mode'],
+
+  css: ['~/assets/css/tailwind.css'],
+
+  vite: {
+    plugins: [tailwindcss()],
+  },
 
   colorMode: {
     classSuffix: '',
